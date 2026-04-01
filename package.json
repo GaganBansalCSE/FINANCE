@@ -1,0 +1,49 @@
+{
+  "name": "finance-dashboard-api",
+  "version": "1.0.0",
+  "description": "Finance Dashboard Backend – Node.js/Express/MongoDB REST API with JWT auth and RBAC",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "jest --runInBand --forceExit",
+    "test:verbose": "jest --runInBand --forceExit --verbose",
+    "test:coverage": "jest --runInBand --forceExit --coverage"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": ["**/tests/**/*.test.js"]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GaganBansalCSE/FINANCE.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/GaganBansalCSE/FINANCE/issues"
+  },
+  "homepage": "https://github.com/GaganBansalCSE/FINANCE#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.3.2",
+    "express-validator": "^7.3.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.3.3",
+    "morgan": "^1.10.1",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.3.0",
+    "mongodb-memory-server": "^11.0.1",
+    "supertest": "^7.2.2"
+  }
+}
