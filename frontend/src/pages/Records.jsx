@@ -38,7 +38,7 @@ const Records = () => {
   })
 
   const { user } = useAuth()
-  const canEdit = ['analyst', 'admin'].includes(user?.role)
+  const canCreate = ['analyst', 'admin'].includes(user?.role)
   const canDelete = user?.role === 'admin'
   const limit = 20
 
@@ -147,7 +147,7 @@ const Records = () => {
             <h1 className="text-3xl font-bold text-gray-900">Records</h1>
             <p className="text-gray-600">Manage your financial records</p>
           </div>
-          {canEdit && (
+          {canCreate && (
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
@@ -322,7 +322,7 @@ const Records = () => {
                       <TableHead>Type</TableHead>
                       <TableHead>Amount</TableHead>
                       <TableHead>Notes</TableHead>
-                      {(canEdit || canDelete) && <TableHead>Actions</TableHead>}
+                      {(canCreate || canDelete) && <TableHead>Actions</TableHead>}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -341,7 +341,7 @@ const Records = () => {
                         <TableCell className="text-sm text-gray-600 max-w-xs truncate">
                           {record.notes || '-'}
                         </TableCell>
-                        {(canEdit || canDelete) && (
+                        {(canCreate || canDelete) && (
                           <TableCell>
                             <div className="flex items-center space-x-2">
                               {canDelete && (
