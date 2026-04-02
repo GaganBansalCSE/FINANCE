@@ -4,8 +4,8 @@
   "description": "Finance Dashboard Backend – Node.js/Express/MongoDB REST API with JWT auth and RBAC",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "node --watch src/server.js",
+    "start": "nodemon server.js",
+    "dev": "nodemon --watch src/server.js",
     "test": "jest --runInBand --forceExit",
     "test:verbose": "jest --runInBand --forceExit --verbose",
     "test:coverage": "jest --runInBand --forceExit --coverage"

@@ -1,42 +1,35 @@
-/**
- * HTTP server entry point.
- * Connects to MongoDB and starts the Express server.
- */
-
 require('dotenv').config();
 
-const app = require('./app');
+const express = require('express');
+const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+
 const connectDB = require('./config/db');
+connectDB();
 
-const PORT = process.env.PORT || 5000;
+const routes = require('./routes');
+const swaggerSpec = require('./docs/swagger');
 
-const start = async () => {
-  await connectDB();
+const app = express();
+const PORT = process.env.PORT || 3001;
 
-  const server = app.listen(PORT, () => {
-    console.log(
-      `Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`
-    );
-    console.log(`API docs available at http://localhost:${PORT}/api-docs`);
-  });
 
-  // Graceful shutdown handlers
-  const shutdown = (signal) => {
-    console.log(`\nReceived ${signal}. Shutting down gracefully...`);
-    server.close(() => {
-      console.log('HTTP server closed.');
-      process.exit(0);
-    });
-  };
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
-  process.on('SIGTERM', () => shutdown('SIGTERM'));
-  process.on('SIGINT', () => shutdown('SIGINT'));
+app.use(cors());
 
-  // Catch unhandled promise rejections
-  process.on('unhandledRejection', (err) => {
-    console.error('Unhandled rejection:', err.message);
-    server.close(() => process.exit(1));
-  });
-};
+app.use(express.json());
 
-start();
+app.get('/health', (req, res) => {
+  res.json({ success: true, message: 'Finance API is running', timestamp: new Date() });
+});
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.use('/api', routes);
+
+app.use((req, res) => {
+  res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` });
+});
