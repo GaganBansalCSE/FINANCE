@@ -322,7 +322,7 @@ const Records = () => {
                       <TableHead>Type</TableHead>
                       <TableHead>Amount</TableHead>
                       <TableHead>Notes</TableHead>
-                      {(canCreate || canDelete) && <TableHead>Actions</TableHead>}
+                      {canDelete && <TableHead>Actions</TableHead>}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -341,27 +341,23 @@ const Records = () => {
                         <TableCell className="text-sm text-gray-600 max-w-xs truncate">
                           {record.notes || '-'}
                         </TableCell>
-                        {(canCreate || canDelete) && (
+                        {canDelete && (
                           <TableCell>
                             <div className="flex items-center space-x-2">
-                              {canDelete && (
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => setEditingRecord(record)}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                </Button>
-                              )}
-                              {canDelete && (
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => setDeleteRecord(record)}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              )}
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setEditingRecord(record)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => setDeleteRecord(record)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
                             </div>
                           </TableCell>
                         )}

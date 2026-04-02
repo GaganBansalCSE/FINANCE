@@ -26,7 +26,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       name: 'Records',
       href: '/records',
       icon: List,
-      roles: ['viewer', 'analyst', 'admin'],
+      roles: ['analyst', 'admin'],
     },
     {
       name: 'Analytics',

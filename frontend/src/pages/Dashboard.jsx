@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { TrendingUp, TrendingDown, DollarSign, FileText } from 'lucide-react'
+import { TrendingUp, TrendingDown, DollarSign, FileText, Users, ShieldCheck, Eye, BarChart2 } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { useAuth } from '../contexts/AuthContext'
 import { formatCurrency, formatDate } from '../lib/utils'
@@ -15,10 +15,13 @@ const Dashboard = () => {
   const [recentRecords, setRecentRecords] = useState([])
   const [monthlyTrends, setMonthlyTrends] = useState([])
   const [categoryTotals, setCategoryTotals] = useState([])
+  const [userStats, setUserStats] = useState(null)
   const [loading, setLoading] = useState(true)
   const { user } = useAuth()
 
   const canViewAnalytics = ['analyst', 'admin'].includes(user?.role)
+  const isAdmin = user?.role === 'admin'
+  const isViewer = user?.role === 'viewer'
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,6 +43,19 @@ const Dashboard = () => {
           setMonthlyTrends(monthlyRes.data.data)
           setCategoryTotals(categoryRes.data.data)
         }
+
+        if (isAdmin) {
+          const usersRes = await api.get('/api/users')
+          const users = usersRes.data.data
+          const stats = {
+            total: users.length,
+            active: users.filter(u => u.status === 'active').length,
+            admins: users.filter(u => u.role === 'admin').length,
+            analysts: users.filter(u => u.role === 'analyst').length,
+            viewers: users.filter(u => u.role === 'viewer').length,
+          }
+          setUserStats(stats)
+        }
       } catch (error) {
         console.error('Error fetching dashboard data:', error)
       } finally {
@@ -48,7 +64,7 @@ const Dashboard = () => {
     }
 
     fetchData()
-  }, [canViewAnalytics])
+  }, [canViewAnalytics, isAdmin])
 
   const summaryCards = [
     {
@@ -88,9 +104,31 @@ const Dashboard = () => {
     <Layout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {isAdmin ? 'Admin Dashboard' : 'Dashboard'}
+          </h1>
           <p className="text-gray-600">Welcome back, {user?.name}</p>
         </div>
+
+        {/* Role info banner */}
+        {isViewer && (
+          <div className="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+            <Eye className="h-4 w-4 shrink-0" />
+            <span>You have <strong>Viewer</strong> access — you can view dashboard data and recent transactions.</span>
+          </div>
+        )}
+        {user?.role === 'analyst' && (
+          <div className="flex items-center gap-2 rounded-lg border border-purple-200 bg-purple-50 px-4 py-3 text-sm text-purple-700">
+            <BarChart2 className="h-4 w-4 shrink-0" />
+            <span>You have <strong>Analyst</strong> access — you can view records, add new records, and access analytics insights.</span>
+          </div>
+        )}
+        {isAdmin && (
+          <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+            <ShieldCheck className="h-4 w-4 shrink-0" />
+            <span>You have <strong>Admin</strong> access — you can create, update, and manage all records and users.</span>
+          </div>
+        )}
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -119,6 +157,36 @@ const Dashboard = () => {
             </Card>
           ))}
         </div>
+
+        {/* Admin: User Overview */}
+        {isAdmin && (
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Users className="h-5 w-5 text-indigo-600" />
+              User Overview
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              {[
+                { label: 'Total Users', value: userStats?.total, color: 'text-gray-900', bg: 'bg-gray-100' },
+                { label: 'Active', value: userStats?.active, color: 'text-green-700', bg: 'bg-green-100' },
+                { label: 'Admins', value: userStats?.admins, color: 'text-red-700', bg: 'bg-red-100' },
+                { label: 'Analysts', value: userStats?.analysts, color: 'text-indigo-700', bg: 'bg-indigo-100' },
+                { label: 'Viewers', value: userStats?.viewers, color: 'text-yellow-700', bg: 'bg-yellow-100' },
+              ].map((stat) => (
+                <Card key={stat.label}>
+                  <CardContent className="p-4 text-center">
+                    {loading || !userStats ? (
+                      <Skeleton className="h-8 w-12 mx-auto mb-1" />
+                    ) : (
+                      <p className={`text-3xl font-bold ${stat.color}`}>{stat.value}</p>
+                    )}
+                    <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Monthly Trends Chart */}
