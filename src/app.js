@@ -74,8 +74,10 @@ app.get('/health', (req, res) => {
 // ── API routes ─────────────────────────────────────────────────────────────
 app.use('/api', routes);
 
-// ── 404 handler ───────────────────────────────────────────────────────────
-app.use((req, res) => {
+// ── 404 handler (API routes only) ─────────────────────────────────────────
+// Scoped to /api so that non-API paths (e.g. React SPA routes) fall through
+// to the static-file / catch-all middleware added in server.js.
+app.use('/api', (req, res) => {
   res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found` });
 });
 

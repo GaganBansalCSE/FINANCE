@@ -18,6 +18,7 @@ require('dotenv').config();
 
 const path = require('path');
 const fs = require('fs');
+const mongoose = require('mongoose');
 const app = require('./src/app');
 const connectDB = require('./src/config/db');
 
@@ -56,8 +57,11 @@ const start = async () => {
   const shutdown = (signal) => {
     console.log(`\nReceived ${signal}. Shutting down gracefully…`);
     server.close(() => {
-      console.log('HTTP server closed.');
-      process.exit(0);
+      mongoose.connection.close().then(() => {
+        console.log('MongoDB connection closed.');
+        console.log('HTTP server closed.');
+        process.exit(0);
+      });
     });
   };
 
