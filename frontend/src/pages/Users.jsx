@@ -17,8 +17,8 @@ const Users = () => {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({
-    role: '',
-    status: ''
+    role: 'all',
+    status: 'all'
   })
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [editingUser, setEditingUser] = useState(null)
@@ -38,8 +38,8 @@ const Users = () => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
-        ...(filters.role && { role: filters.role }),
-        ...(filters.status && { status: filters.status })
+        ...(filters.role !== 'all' && { role: filters.role }),
+        ...(filters.status !== 'all' && { status: filters.status })
       })
 
       const response = await api.get(`/api/users?${params}`)
@@ -210,7 +210,7 @@ const Users = () => {
                     <SelectValue placeholder="All roles" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All roles</SelectItem>
+                    <SelectItem value="all">All roles</SelectItem>
                     <SelectItem value="viewer">Viewer</SelectItem>
                     <SelectItem value="analyst">Analyst</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
@@ -224,7 +224,7 @@ const Users = () => {
                     <SelectValue placeholder="All statuses" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All statuses</SelectItem>
+                    <SelectItem value="all">All statuses</SelectItem>
                     <SelectItem value="active">Active</SelectItem>
                     <SelectItem value="inactive">Inactive</SelectItem>
                     <SelectItem value="suspended">Suspended</SelectItem>
