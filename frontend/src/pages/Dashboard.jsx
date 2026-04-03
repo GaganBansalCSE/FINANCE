@@ -120,7 +120,7 @@ const Dashboard = () => {
         {user?.role === 'analyst' && (
           <div className="flex items-center gap-2 rounded-lg border border-purple-200 bg-purple-50 px-4 py-3 text-sm text-purple-700">
             <BarChart2 className="h-4 w-4 shrink-0" />
-            <span>You have <strong>Analyst</strong> access — you can view records, add new records, and access analytics insights.</span>
+            <span>You have <strong>Analyst</strong> access — you can view records and access analytics insights.</span>
           </div>
         )}
         {isAdmin && (

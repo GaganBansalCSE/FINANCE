@@ -36,7 +36,7 @@ const Profile = () => {
     analyst: [
       { action: 'View dashboard', allowed: true },
       { action: 'View records', allowed: true },
-      { action: 'Create records', allowed: true },
+      { action: 'Create records', allowed: false },
       { action: 'Edit records', allowed: false },
       { action: 'Delete records', allowed: false },
       { action: 'View analytics', allowed: true },
@@ -71,7 +71,7 @@ const Profile = () => {
       case 'admin':
         return 'Full system access with user management capabilities'
       case 'analyst':
-        return 'Can create records and access analytics and reporting features'
+        return 'Can view records and access analytics and reporting features'
       case 'viewer':
         return 'Read-only access to dashboard and records'
       default:

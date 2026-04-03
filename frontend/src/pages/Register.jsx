@@ -130,9 +130,9 @@ const Register = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="viewer">Viewer</SelectItem>
-                  <SelectItem value="analyst">Analyst</SelectItem>
                 </SelectContent>
               </Select>
+              <p className="text-xs text-gray-500">New accounts are created with Viewer access. Contact an admin to request elevated access.</p>
             </div>
             
             <Button type="submit" className="w-full" disabled={isLoading}>

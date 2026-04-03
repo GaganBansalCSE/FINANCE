@@ -38,7 +38,7 @@ const Records = () => {
   })
 
   const { user } = useAuth()
-  const canCreate = ['analyst', 'admin'].includes(user?.role)
+  const canCreate = user?.role === 'admin'
   const canDelete = user?.role === 'admin'
   const limit = 20
 

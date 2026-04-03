@@ -3,7 +3,7 @@
  *
  * GET    /api/records        – All roles (viewer, analyst, admin)
  * GET    /api/records/:id    – All roles
- * POST   /api/records        – Analyst and Admin
+ * POST   /api/records        – Admin only
  * PATCH  /api/records/:id   – Admin only
  * DELETE /api/records/:id   – Admin only
  */
@@ -43,8 +43,8 @@ router.get('/:id', recordIdRule, validate, getRecord);
 
 // @route   POST /api/records
 // @desc    Create a financial record
-// @access  Analyst, Admin
-router.post('/', authorize('analyst', 'admin'), createRecordRules, validate, createRecord);
+// @access  Admin
+router.post('/', authorize('admin'), createRecordRules, validate, createRecord);
 
 // @route   PATCH /api/records/:id
 // @desc    Update a financial record
