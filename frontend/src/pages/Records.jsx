@@ -21,7 +21,7 @@ const Records = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [filters, setFilters] = useState({
     type: 'all',
-    category: '',
+    category: 'all',
     search: '',
     startDate: '',
     endDate: ''
@@ -69,7 +69,7 @@ const Records = () => {
         page: currentPage,
         limit,
         ...(filters.type !== 'all' && { type: filters.type }),
-        ...(filters.category && { category: filters.category }),
+        ...(filters.category !== 'all' && { category: filters.category }),
         ...(filters.search && { search: filters.search }),
         ...(filters.startDate && { startDate: filters.startDate }),
         ...(filters.endDate && { endDate: filters.endDate })
@@ -261,7 +261,7 @@ const Records = () => {
                     <SelectValue placeholder="All categories" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All categories</SelectItem>
+                    <SelectItem value="all">All categories</SelectItem>
                     {categories.map(category => (
                       <SelectItem key={category} value={category}>{category}</SelectItem>
                     ))}
