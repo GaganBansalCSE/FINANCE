@@ -11,14 +11,17 @@ const FinancialRecord = require('../models/FinancialRecord');
  * @returns {Promise<{totalIncome, totalExpenses, netBalance}>}
  */
 const getSummary = async () => {
-  const result = await FinancialRecord.aggregate([
-    { $match: { isDeleted: false } },
-    {
-      $group: {
-        _id: '$type',
-        total: { $sum: '$amount' },
+  const [result, recordCount] = await Promise.all([
+    FinancialRecord.aggregate([
+      { $match: { isDeleted: false } },
+      {
+        $group: {
+          _id: '$type',
+          total: { $sum: '$amount' },
+        },
       },
-    },
+    ]),
+    FinancialRecord.countDocuments({ isDeleted: false }),
   ]);
 
   let totalIncome = 0;
@@ -33,6 +36,7 @@ const getSummary = async () => {
     totalIncome,
     totalExpenses,
     netBalance: totalIncome - totalExpenses,
+    recordCount,
   };
 };
 
@@ -42,24 +46,23 @@ const getSummary = async () => {
  */
 const getCategoryTotals = async () => {
   return FinancialRecord.aggregate([
-    { $match: { isDeleted: false } },
+    { $match: { isDeleted: false, type: 'expense' } },
     {
       $group: {
-        _id: { category: '$category', type: '$type' },
-        total: { $sum: '$amount' },
+        _id: '$category',
+        amount: { $sum: '$amount' },
         count: { $sum: 1 },
       },
     },
     {
       $project: {
         _id: 0,
-        category: '$_id.category',
-        type: '$_id.type',
-        total: 1,
+        category: '$_id',
+        amount: 1,
         count: 1,
       },
     },
-    { $sort: { total: -1 } },
+    { $sort: { amount: -1 } },
   ]);
 };
 
@@ -115,10 +118,13 @@ const getMonthlyTrends = async (year) => {
   // Normalise into month-keyed objects for easy frontend consumption
   const months = {};
   for (let m = 1; m <= 12; m++) {
-    months[m] = { month: m, income: 0, expense: 0 };
+    months[m] = { month: m, income: 0, expenses: 0 };
   }
   result.forEach(({ month, type, total }) => {
-    if (months[month]) months[month][type] = total;
+    if (months[month]) {
+      const key = type === 'expense' ? 'expenses' : type;
+      months[month][key] = total;
+    }
   });
 
   return Object.values(months);

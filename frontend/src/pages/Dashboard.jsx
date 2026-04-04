@@ -237,6 +237,7 @@ const Dashboard = () => {
                         outerRadius={80}
                         fill="#8884d8"
                         dataKey="amount"
+                        nameKey="category"
                       >
                         {categoryTotals.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

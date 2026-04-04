@@ -13,45 +13,51 @@ describe('Dashboard Service', () => {
 
   // ── getSummary ─────────────────────────────────────────────────────────────
   describe('getSummary()', () => {
-    it('should calculate total income, expenses, and net balance', async () => {
+    it('should calculate total income, expenses, net balance, and record count', async () => {
       FinancialRecord.aggregate.mockResolvedValue([
         { _id: 'income', total: 8000 },
         { _id: 'expense', total: 2500 },
       ]);
+      FinancialRecord.countDocuments.mockResolvedValue(10);
 
       const result = await dashboardService.getSummary();
 
       expect(result.totalIncome).toBe(8000);
       expect(result.totalExpenses).toBe(2500);
       expect(result.netBalance).toBe(5500);
+      expect(result.recordCount).toBe(10);
     });
 
     it('should return zeros when no records exist', async () => {
       FinancialRecord.aggregate.mockResolvedValue([]);
+      FinancialRecord.countDocuments.mockResolvedValue(0);
 
       const result = await dashboardService.getSummary();
 
       expect(result.totalIncome).toBe(0);
       expect(result.totalExpenses).toBe(0);
       expect(result.netBalance).toBe(0);
+      expect(result.recordCount).toBe(0);
     });
 
     it('should handle only income records', async () => {
       FinancialRecord.aggregate.mockResolvedValue([{ _id: 'income', total: 5000 }]);
+      FinancialRecord.countDocuments.mockResolvedValue(3);
 
       const result = await dashboardService.getSummary();
       expect(result.totalIncome).toBe(5000);
       expect(result.totalExpenses).toBe(0);
       expect(result.netBalance).toBe(5000);
+      expect(result.recordCount).toBe(3);
     });
   });
 
   // ── getCategoryTotals ──────────────────────────────────────────────────────
   describe('getCategoryTotals()', () => {
-    it('should return category totals from aggregation', async () => {
+    it('should return expense category totals with amount field', async () => {
       const mockData = [
-        { category: 'Salary', type: 'income', total: 5000, count: 1 },
-        { category: 'Rent', type: 'expense', total: 1500, count: 1 },
+        { category: 'Rent', amount: 1500, count: 1 },
+        { category: 'Food', amount: 800, count: 3 },
       ];
       FinancialRecord.aggregate.mockResolvedValue(mockData);
 
@@ -105,11 +111,11 @@ describe('Dashboard Service', () => {
 
       const jan = result.find((m) => m.month === 1);
       expect(jan.income).toBe(5000);
-      expect(jan.expense).toBe(1500);
+      expect(jan.expenses).toBe(1500);
 
       const feb = result.find((m) => m.month === 2);
       expect(feb.income).toBe(0);
-      expect(feb.expense).toBe(0);
+      expect(feb.expenses).toBe(0);
 
       const mar = result.find((m) => m.month === 3);
       expect(mar.income).toBe(3000);
