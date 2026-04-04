@@ -121,6 +121,7 @@ const updateRecord = async (id, updates) => {
   if (updates.category !== undefined) filtered.category = String(updates.category);
   if (updates.date !== undefined) filtered.date = new Date(updates.date);
   if (updates.notes !== undefined) filtered.notes = String(updates.notes);
+  if (updates.paymentMethod !== undefined) filtered.paymentMethod = String(updates.paymentMethod);
 
   const record = await FinancialRecord.findOneAndUpdate(
     { _id: id, isDeleted: false },

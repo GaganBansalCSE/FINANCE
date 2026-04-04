@@ -42,6 +42,12 @@ const financialRecordSchema = new mongoose.Schema(
       default: '',
     },
 
+    paymentMethod: {
+      type: String,
+      enum: ['Credit Card', 'Debit Card', 'UPI', 'NEFT', 'CASH'],
+      default: 'Debit Card',
+    },
+
     // Reference to the admin/analyst user who created this record
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

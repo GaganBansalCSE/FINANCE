@@ -34,6 +34,11 @@ const createRecordRules = [
     .trim()
     .isLength({ max: 500 })
     .withMessage('Notes must be at most 500 characters'),
+
+  body('paymentMethod')
+    .optional()
+    .isIn(['Credit Card', 'Debit Card', 'UPI', 'NEFT', 'CASH'])
+    .withMessage('Payment method must be one of: Credit Card, Debit Card, UPI, NEFT, CASH'),
 ];
 
 const updateRecordRules = [
@@ -65,6 +70,11 @@ const updateRecordRules = [
     .trim()
     .isLength({ max: 500 })
     .withMessage('Notes must be at most 500 characters'),
+
+  body('paymentMethod')
+    .optional()
+    .isIn(['Credit Card', 'Debit Card', 'UPI', 'NEFT', 'CASH'])
+    .withMessage('Payment method must be one of: Credit Card, Debit Card, UPI, NEFT, CASH'),
 ];
 
 const recordIdRule = [

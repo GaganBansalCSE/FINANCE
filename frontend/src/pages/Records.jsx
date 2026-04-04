@@ -34,7 +34,8 @@ const Records = () => {
     type: 'expense',
     category: '',
     notes: '',
-    date: new Date().toISOString().split('T')[0]
+    date: new Date().toISOString().split('T')[0],
+    paymentMethod: 'Debit Card'
   })
 
   const { user } = useAuth()
@@ -104,7 +105,8 @@ const Records = () => {
         type: 'expense',
         category: '',
         notes: '',
-        date: new Date().toISOString().split('T')[0]
+        date: new Date().toISOString().split('T')[0],
+        paymentMethod: 'Debit Card'
       })
       fetchRecords()
     } catch (error) {
@@ -113,13 +115,18 @@ const Records = () => {
   }
 
   const handleUpdateRecord = async () => {
+    if (!editingRecord) return
     try {
       const recordData = {
-        ...editingRecord,
-        amount: parseFloat(editingRecord.amount)
+        amount: parseFloat(editingRecord.amount),
+        type: editingRecord.type,
+        category: editingRecord.category,
+        date: editingRecord.date,
+        notes: editingRecord.notes,
+        paymentMethod: editingRecord.paymentMethod
       }
 
-      await api.patch(`/api/records/${editingRecord.id}`, recordData)
+      await api.patch(`/api/records/${editingRecord._id}`, recordData)
       setEditingRecord(null)
       fetchRecords()
     } catch (error) {
@@ -128,8 +135,9 @@ const Records = () => {
   }
 
   const handleDeleteRecord = async () => {
+    if (!deleteRecord) return
     try {
-      await api.delete(`/api/records/${deleteRecord.id}`)
+      await api.delete(`/api/records/${deleteRecord._id}`)
       setDeleteRecord(null)
       fetchRecords()
     } catch (error) {
@@ -218,6 +226,21 @@ const Records = () => {
                       onChange={(e) => setNewRecord(prev => ({ ...prev, notes: e.target.value }))}
                       placeholder="Optional notes"
                     />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="paymentMethod">Payment Method</Label>
+                    <Select value={newRecord.paymentMethod} onValueChange={(value) => setNewRecord(prev => ({ ...prev, paymentMethod: value }))}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Debit Card">Debit Card</SelectItem>
+                        <SelectItem value="Credit Card">Credit Card</SelectItem>
+                        <SelectItem value="UPI">UPI</SelectItem>
+                        <SelectItem value="NEFT">NEFT</SelectItem>
+                        <SelectItem value="CASH">CASH</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
                 <DialogFooter>
@@ -321,6 +344,7 @@ const Records = () => {
                       <TableHead>Category</TableHead>
                       <TableHead>Type</TableHead>
                       <TableHead>Amount</TableHead>
+                      <TableHead>Payment Method</TableHead>
                       <TableHead>Notes</TableHead>
                       {canDelete && <TableHead>Actions</TableHead>}
                     </TableRow>
@@ -337,6 +361,9 @@ const Records = () => {
                         </TableCell>
                         <TableCell className={record.type === 'income' ? 'text-green-600' : 'text-red-600'}>
                           {formatCurrency(record.amount)}
+                        </TableCell>
+                        <TableCell className="text-sm text-gray-600">
+                          {record.paymentMethod || 'Debit Card'}
                         </TableCell>
                         <TableCell className="text-sm text-gray-600 max-w-xs truncate">
                           {record.notes || '-'}
@@ -462,6 +489,21 @@ const Records = () => {
                   value={editingRecord.notes || ''}
                   onChange={(e) => setEditingRecord(prev => ({ ...prev, notes: e.target.value }))}
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-paymentMethod">Payment Method</Label>
+                <Select value={editingRecord.paymentMethod || 'Debit Card'} onValueChange={(value) => setEditingRecord(prev => ({ ...prev, paymentMethod: value }))}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Debit Card">Debit Card</SelectItem>
+                    <SelectItem value="Credit Card">Credit Card</SelectItem>
+                    <SelectItem value="UPI">UPI</SelectItem>
+                    <SelectItem value="NEFT">NEFT</SelectItem>
+                    <SelectItem value="CASH">CASH</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           )}
