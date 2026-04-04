@@ -61,9 +61,10 @@ export function AuthProvider({ children }) {
       return { success: true }
     } catch (error) {
       const data = error.response?.data
+      const firstError = data?.errors?.[0]
       const message =
-        data?.errors?.length
-          ? data.errors[0]
+        firstError
+          ? typeof firstError === 'string' ? firstError : firstError.message || data.message
           : data?.message || 'Login failed'
       return {
         success: false,
