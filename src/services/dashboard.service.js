@@ -169,7 +169,20 @@ const getWeeklyTrends = async (weeks = 8) => {
     { $sort: { year: 1, week: 1 } },
   ]);
 
-  return result;
+  // Normalise into week-keyed objects for easy frontend consumption
+  const weekMap = {};
+  result.forEach(({ week, year, type, total }) => {
+    const key = `${year}-${week}`;
+    if (!weekMap[key]) {
+      weekMap[key] = { week, year, income: 0, expenses: 0 };
+    }
+    const field = type === 'expense' ? 'expenses' : 'income';
+    weekMap[key][field] = total;
+  });
+
+  return Object.values(weekMap).sort((a, b) =>
+    a.year !== b.year ? a.year - b.year : a.week - b.week
+  );
 };
 
 module.exports = {
